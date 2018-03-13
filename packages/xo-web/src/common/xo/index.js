@@ -2325,6 +2325,16 @@ export const fixHostNotInXosanNetwork = (xosanSr, host) =>
 
 // Licenses --------------------------------------------------------------------
 
+export const productId2Plan = (() => {
+  const PRODUCT_TO_PLAN = {
+    starter: '2',
+    enterprise: '3',
+    premium: '4',
+    'sb-premium': '4',
+  }
+  return productId => PRODUCT_TO_PLAN[productId]
+})()
+
 export const getLicenses = productId => _call('xoa.getLicenses', { productId })
 
 export const getLicense = (productId, boundObjectId) =>
@@ -2332,3 +2342,18 @@ export const getLicense = (productId, boundObjectId) =>
 
 export const unlockXosan = (licenseId, srId) =>
   _call('xosan.unlock', { licenseId, sr: srId })
+
+export const selfBindLicense = ({ id, plan }) =>
+  confirm({
+    title: _('bindXoaLicense'),
+    body: _('bindXoaLicenseConfirm'),
+    strongConfirm: {
+      messageId: 'bindXoaLicenseConfirmText',
+      values: { licenseType: plan },
+    },
+    icon: 'unlock',
+  }).then(() => _call('xoa.selfBindLicense', { licenseId: id }), noop)
+
+export const subscribeCurrentLicense = createSubscription(() =>
+  _call('xoa.getSelfLicense')
+)
