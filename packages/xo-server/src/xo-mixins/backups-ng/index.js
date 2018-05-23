@@ -140,6 +140,7 @@ const getOldEntries = <T>(retention: number, entries?: T[]): T[] =>
       : entries
 
 const defaultSettings: Settings = {
+  concurrency: 0,
   deleteFirst: false,
   exportRetention: 0,
   reportWhen: 'failure',
@@ -160,6 +161,9 @@ const getSetting = <T>(
         return setting
       }
     }
+  }
+  if (defaultValue !== undefined) {
+    return defaultValue
   }
   return defaultSettings[name]
 }
@@ -519,7 +523,7 @@ export default class BackupNg {
           'concurrency',
           ['']
         )
-        if (concurrency !== undefined) {
+        if (concurrency !== 0) {
           handleVm = limitConcurrency(concurrency)(handleVm)
         }
         await asyncMap(vms, handleVm)
@@ -738,17 +742,13 @@ export default class BackupNg {
     const { id: jobId, settings } = job
     const { id: scheduleId } = schedule
 
-    const exportRetention: number = getSetting(
-      settings,
-      'exportRetention',
-      [scheduleId],
-      0
-    )
+    const exportRetention: number = getSetting(settings, 'exportRetention', [
+      scheduleId,
+    ])
     const snapshotRetention: number = getSetting(
       settings,
       'snapshotRetention',
-      [scheduleId],
-      0
+      [scheduleId]
     )
 
     if (exportRetention === 0) {
@@ -896,11 +896,9 @@ export default class BackupNg {
                   )
                 ): any)
 
-                const deleteFirst = getSetting(
-                  settings,
-                  'deleteFirst',
-                  remoteId
-                )
+                const deleteFirst = getSetting(settings, 'deleteFirst', [
+                  remoteId,
+                ])
                 if (deleteFirst) {
                   await this._deleteFullVmBackups(handler, oldBackups)
                 }
@@ -942,7 +940,7 @@ export default class BackupNg {
                   listReplicatedVms(xapi, scheduleId, srId, vmUuid)
                 )
 
-                const deleteFirst = getSetting(settings, 'deleteFirst', srId)
+                const deleteFirst = getSetting(settings, 'deleteFirst', [srId])
                 if (deleteFirst) {
                   await this._deleteVms(xapi, oldVms)
                 }
@@ -1092,7 +1090,7 @@ export default class BackupNg {
 
                 const deleteFirst =
                   exportRetention > 1 &&
-                  getSetting(settings, 'deleteFirst', remoteId)
+                  getSetting(settings, 'deleteFirst', [remoteId])
                 if (deleteFirst) {
                   await deleteOldBackups()
                 }
@@ -1168,7 +1166,7 @@ export default class BackupNg {
                   listReplicatedVms(xapi, scheduleId, srId, vmUuid)
                 )
 
-                const deleteFirst = getSetting(settings, 'deleteFirst', srId)
+                const deleteFirst = getSetting(settings, 'deleteFirst', [srId])
                 if (deleteFirst) {
                   await this._deleteVms(xapi, oldVms)
                 }
