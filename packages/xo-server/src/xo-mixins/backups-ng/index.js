@@ -135,7 +135,9 @@ const compareTimestamp = (a: Metadata, b: Metadata): number =>
 const getOldEntries = <T>(retention: number, entries?: T[]): T[] =>
   entries === undefined
     ? []
-    : --retention > 0 ? entries.slice(0, -retention) : entries
+    : --retention > 0
+      ? entries.slice(0, -retention)
+      : entries
 
 const defaultSettings: Settings = {
   deleteFirst: false,
@@ -337,7 +339,9 @@ const wrapTask = async <T>(opts: any, task: Promise<T>): Promise<T> => {
         result:
           result === undefined
             ? value
-            : typeof result === 'function' ? result(value) : result,
+            : typeof result === 'function'
+              ? result(value)
+              : result,
         status: 'success',
         taskId,
       })
@@ -376,7 +380,9 @@ const wrapTaskFn = <T>(
         result:
           result === undefined
             ? value
-            : typeof result === 'function' ? result(value) : result,
+            : typeof result === 'function'
+              ? result(value)
+              : result,
         status: 'success',
         taskId,
       })
@@ -511,7 +517,7 @@ export default class BackupNg {
         const concurrency: number | void = getSetting(
           job.settings,
           'concurrency',
-          ''
+          ['']
         )
         if (concurrency !== undefined) {
           handleVm = limitConcurrency(concurrency)(handleVm)
