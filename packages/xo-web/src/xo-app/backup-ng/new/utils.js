@@ -17,6 +17,11 @@ export const Number = [
     effects: {
       onChange: (_, { target: { value } }) => (state, props) => {
         if (value === '') {
+          if (!props.optional) {
+            return
+          }
+
+          props.onChange(undefined)
           return
         }
         props.onChange(+value)
@@ -24,11 +29,11 @@ export const Number = [
     },
   }),
   injectState,
-  ({ effects, state, value }) => (
+  ({ effects, state, value, optional }) => (
     <Input
       type='number'
       onChange={effects.onChange}
-      value={String(value)}
+      value={value === undefined ? undefined : String(value)}
       min='0'
     />
   ),
@@ -37,4 +42,5 @@ export const Number = [
 Number.propTypes = {
   onChange: PropTypes.func.isRequired,
   value: PropTypes.number.isRequired,
+  optional: PropTypes.bool,
 }
