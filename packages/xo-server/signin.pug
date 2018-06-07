@@ -12,7 +12,7 @@ html
       div.mb-2(style = 'display: flex;')
         img(src = 'assets/logo.png' style = 'margin: auto;')
       h2.text-xs-center.mb-2 Xen Orchestra
-      form(action = 'signin/local' method = 'post')
+      form(action = 'xo/signin/local' method = 'post')
         fieldset
           if error
             p.text-danger #{error}
@@ -47,4 +47,4 @@ html
               i.fa.fa-sign-in
               |  Sign in
           each label, id in strategies
-            div: a(href = 'signin/' + id) Sign in with #{label}
+            div: a(href = 'xo/signin/' + id) Sign in with #{label}
