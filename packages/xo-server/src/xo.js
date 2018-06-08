@@ -164,7 +164,7 @@ export default class Xo extends EventEmitter {
     const url = await (function generateUniqueUrl () {
       return generateToken().then(token => {
         const url = `/api/${token}${suffix}`
-
+        //console.log('generateToken() :' + url);
         return url in watchers ? generateUniqueUrl() : url
       })
     })()

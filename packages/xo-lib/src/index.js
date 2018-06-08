@@ -15,8 +15,10 @@ export class XoError extends BaseError {}
 export default class Xo extends JsonRpcWebSocketClient {
   constructor (opts) {
     const url = opts != null ? opts.url : '.'
-    //console.log(url);
-    super(`${url === '/' ? '/' : url}/api/`)
+    console.log("JsonRpcWebSocketClient");
+	console.log("super(url?'':/api/)")
+    console.log(url);
+    super(`${url === '/' ? '' : url}/api/`)
 
     this._credentials = opts != null ? opts.credentials : null
     this._user = null

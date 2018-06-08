@@ -196,7 +196,7 @@ class XoaUpdater extends EventEmitter {
 
     if (!this._client) {
       try {
-        this._client = new Client('./api/updater')
+        this._client = new Client('./xo/api/updater')
         await this._client.open()
         handleOpen(this._client)
       } catch (error) {

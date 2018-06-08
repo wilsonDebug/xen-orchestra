@@ -132,13 +132,12 @@ async function setUpPassport (express, xo) {
     res.redirect('/xo/')
   })
 
-  const SIGNIN_STRATEGY_RE = /^\/xo\/signin\/([^/]+)(\/callback)?(:?\?.*)?$/
+  const SIGNIN_STRATEGY_RE = /^\/.*\/signin\/([^/]+)(\/.*\/callback)?(:?\?.*)?$/
   express.use(async (req, res, next) => {
     const { url } = req
     const matches = url.match(SIGNIN_STRATEGY_RE)
-    console.log(url);
+
     if (matches) {
-      console.log(matches);
       return passport.authenticate(matches[1], async (err, user, info) => {
         if (err) {
           return next(err)
@@ -161,7 +160,8 @@ async function setUpPassport (express, xo) {
           'session-is-persistent',
           matches[1] === 'local' && req.body['remember-me'] === 'on'
         )
-        res.redirect(req.flash('return-url')[0] || '/xo/')
+
+        res.redirect(req.flash('return-url')[0] || '/')
       })(req, res, next)
     }
 
@@ -392,7 +392,8 @@ const setUpProxies = (express, opts, xo) => {
 
   express.on('upgrade', (req, socket, head) => {
     const { url } = req
-
+    console.log('on upgrade');
+    console.log(url);
     for (const prefix in opts) {
       if (startsWith(url, prefix)) {
         const target = opts[prefix]
@@ -476,6 +477,7 @@ const setUpApi = (webServer, xo, verboseLogsOnErrors) => {
     })
   }
   webServer.on('upgrade', (req, socket, head) => {
+    //console.log("req.url webSocketServer.handleUpgrade : " + req.url);
     if (req.url === '/xo/api/') {
       webSocketServer.handleUpgrade(req, socket, head, ws =>
         onConnection(ws, req)
@@ -606,6 +608,7 @@ export default async function main (args) {
         if (req.secure) {
           return next()
         }
+
         res.redirect(`https://${req.hostname}:${port}${req.originalUrl}`)
       })
     }
